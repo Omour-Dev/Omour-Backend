@@ -1,0 +1,23 @@
+{
+    "User": true,
+    "Authentication": true,
+    "Apps": true,
+    "Core": true,
+    "Setting": true,
+    "Authorization": true,
+    "Page": true,
+    "DeviceToken": true,
+    "Area": true,
+    "Category": true,
+    "Section": true,
+    "Vendor": true,
+    "Product": true,
+    "Variation": true,
+    "Attribute": true,
+    "Order": true,
+    "Cart": true,
+    "Coupon": true,
+    "Offer": true,
+    "CreateOfferVendorsTable": true,
+    "Notification": true
+}

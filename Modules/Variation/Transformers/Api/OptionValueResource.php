@@ -1,0 +1,16 @@
+<?php
+
+namespace Modules\Variation\Transformers\Api;
+
+use Illuminate\Http\Resources\Json\JsonResource;
+
+class OptionValueResource extends JsonResource
+{
+    public function toArray($request)
+    {
+        return [
+            'id'    => $this->id,
+            'title' => $this->translate(locale())->title,
+       ];
+    }
+}

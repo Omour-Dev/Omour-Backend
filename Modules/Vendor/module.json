@@ -1,0 +1,17 @@
+{
+    "name": "Vendor",
+    "alias": "vendor",
+    "description": "",
+    "keywords": [],
+    "order": 0,
+    "providers": [
+        "Modules\\Vendor\\Providers\\VendorServiceProvider"
+    ],
+    "aliases": {
+        "VendorFacade": "Modules\\Vendor\\Facades\\VendorFacade"
+    },
+    "files": [
+        "composer.php"
+    ],
+    "requires": []
+}
