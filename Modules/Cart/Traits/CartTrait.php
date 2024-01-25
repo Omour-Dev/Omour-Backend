@@ -10,14 +10,14 @@ use Modules\Attribute\Transformers\Api\AttributeResource;
 
 trait CartTrait
 {
-    public function getCart(string $userId)
+    public function getCart()
     {
-        return Cart::session($userId);
+        return Cart::session(auth()->id());
     }
 
-    public function getVendor($data)
+    public function getVendor()
     {
-        $cart = $this->getCart($data['user_token']);
+        $cart = $this->getCart(auth()->id());
 
         $vendorCondition = $cart->getCondition('vendor');
 
@@ -26,15 +26,15 @@ trait CartTrait
         }
 
         return null; // or handle the case where the condition doesn't exist
-}
+    }
 
     public function vendorValidation($data, $product)
     {
         $errors = null;
-        // TODO: heloo -> auth()->id()
-        $cart = $this->getCart(1);
-        $vendor = $cart->getCondition('vendor');
 
+        $cart = $this->getCart(auth()->id());
+        $vendor = $cart->getCondition('vendor');
+        // dd($product->vendor_id);
         if ($vendor) {
             if ($vendor->getType() != $product->vendor_id)
                 return $errors = new MessageBag([
@@ -47,7 +47,7 @@ trait CartTrait
 
     public function addToCart($data, $item)
     {
-        $cart = $this->getCart(1);
+        $cart = $this->getCart(auth()->id());
         // dd(str(url($item['product']['image'])));
 
         $cart->add([
@@ -79,22 +79,22 @@ trait CartTrait
 
     public function removeItem($data, $id)
     {
-        $cart = $this->getCart($data['user_token']);
+        $cart = $this->getCart(auth()->id());
         return $cart->remove($id);
     }
 
-    public function clearCart($data)
+    public function clearCart()
     {
-        $cart = $this->getCart($data['user_token']);
+        $cart = $this->getCart(auth()->id());
         $cart->clear();
         $cart->clearCartConditions();
 
         return true;
     }
 
-    public function cartDetails($data)
+    public function cartDetails()
     {
-        $cart = $this->getCart("hello");
+        $cart = $this->getCart(auth()->id());
 
         $items = [];
 
@@ -105,9 +105,9 @@ trait CartTrait
 
 
 
-    public function cartTotal($data)
+    public function cartTotal()
     {
-        $cart = $this->getCart($data['user_token']);
+        $cart = $this->getCart(auth()->id());
 
         return $cart->getTotal();
     }

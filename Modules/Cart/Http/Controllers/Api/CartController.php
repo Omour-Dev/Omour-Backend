@@ -23,7 +23,7 @@ class CartController extends ApiController
     {
         return $this->response([
             'items' => array_values(collect($this->cartDetails($request))->toArray()),
-            'total' => $this->cartTotal($request)
+            'total' => $this->cartTotal()
         ]);
     }
 
@@ -50,7 +50,7 @@ class CartController extends ApiController
 
         return $this->response([
             'items' => array_values(collect($this->cartDetails($request))->toArray()),
-            'total' => $this->cartTotal($request)
+            'total' => $this->cartTotal()
         ]);
     }
 
@@ -60,7 +60,7 @@ class CartController extends ApiController
 
         return $this->response([
             'items' => array_values(collect($this->cartDetails($request))->toArray()),
-            'total' => $this->cartTotal($request)
+            'total' => $this->cartTotal()
         ]);
     }
 }
