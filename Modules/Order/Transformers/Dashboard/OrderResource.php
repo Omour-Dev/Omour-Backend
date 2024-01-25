@@ -20,9 +20,9 @@ class OrderResource extends Resource
             'discount'             => $this->discount,
             'total'                => $this->total,
             'date'                 => $this->date,
-            'vendor'               => $this->vendor->translate(locale())->title,
+            'vendor'               => /*$this->vendor->translate(locale())->title ??*/ '',
             'user'                 => $this->user->name,
-            'order_status_id'      => $this->orderStatus->translate(locale())->title,
+            'order_status_id'      => $this->orderStatus->translate(locale())->title??'',
             'deleted_at'           => $this->deleted_at,
             'created_at'           => date('d-m-Y', strtotime($this->created_at)),
         ];

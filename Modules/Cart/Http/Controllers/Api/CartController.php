@@ -29,19 +29,18 @@ class CartController extends ApiController
 
     public function add(Request $request)
     {
-        $data = $this->product->findById($request);
+        $product_id = (int) $request->input('product_id');
+        $data = $this->product->findById($product_id);
 
         $vendorCheck = $this->vendorValidation($request,$data['product']);
-
         if (!is_null($vendorCheck)) {
             return $this->invalidData($vendorCheck);
         }
 
-        $this->addToCart($request,$data);
-
+        $cartCollection = $this->addToCart($request,$data);
         return $this->response([
-            'items' => array_values(collect($this->cartDetails($request))->toArray()),
-            'total' => $this->cartTotal($request)
+            'items' => $cartCollection->toArray(),
+            'total' => $cartCollection->count()
         ]);
     }
 

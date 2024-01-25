@@ -10,7 +10,7 @@ use Modules\Attribute\Transformers\Api\AttributeResource;
 
 trait CartTrait
 {
-    public function getCart($userId)
+    public function getCart(string $userId)
     {
         return Cart::session($userId);
     }
@@ -19,17 +19,20 @@ trait CartTrait
     {
         $cart = $this->getCart($data['user_token']);
 
-        $vendor = $cart->getCondition('vendor')->getType();
+        $vendorCondition = $cart->getCondition('vendor');
 
-        return $vendor;
-    }
+        if ($vendorCondition) {
+            return $vendorCondition->getType();
+        }
+
+        return null; // or handle the case where the condition doesn't exist
+}
 
     public function vendorValidation($data, $product)
     {
         $errors = null;
-
-        $cart = $this->getCart($data['user_token']);
-
+        // TODO: heloo -> auth()->id()
+        $cart = $this->getCart(1);
         $vendor = $cart->getCondition('vendor');
 
         if ($vendor) {
@@ -44,16 +47,17 @@ trait CartTrait
 
     public function addToCart($data, $item)
     {
-        $cart = $this->getCart($data['user_token']);
+        $cart = $this->getCart(1);
+        // dd(str(url($item['product']['image'])));
 
         $cart->add([
             'id' => $item['product']['id'],
-            'name'        => $item['product']->translate(locale())->title,
-            'price'       => $item['product']['offer'] ?  $item['product']['offer']['offer_price'] : $item['product']['price'],
+            'name'        => $item['product']->title,
+            'price'       => ($item['product']['offer'] ?  $item['product']['offer']['offer_price'] : $item['product']['price'])??1,
             'quantity'    => $data['qty'] ? $data['qty'] : +1,
             'attributes'  => [
                 'type'        => 'simple',
-                'image'       => url($item['product']['image']),
+                // 'image'       => url($item['product']['image']),
                 'translation' => $item['product']['translations'],
                 'options'     => $item['options']  ? OptionResource::collection($item['options']) : null,
                 'additional'  => $item['attributes']  ? AttributeResource::collection($item['attributes']) : null,
@@ -67,8 +71,10 @@ trait CartTrait
         ]);
 
         $cart->condition([$orderVendor]);
+        $cartCollection = Cart::getContent();
+        $cartCollection->toJson();
 
-        return true;
+        return $cartCollection;
     }
 
     public function removeItem($data, $id)
@@ -88,7 +94,7 @@ trait CartTrait
 
     public function cartDetails($data)
     {
-        $cart = $this->getCart($data['user_token']);
+        $cart = $this->getCart("hello");
 
         $items = [];
 

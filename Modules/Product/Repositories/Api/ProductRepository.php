@@ -64,10 +64,11 @@ class ProductRepository
 
     public function findById($request)
     {
+
         $options    = null;
         $attributes = null;
 
-        $product = $this->product->active()->where('id', $request['product_id'])->first();
+        $product = $this->product->active()->where('id', $request)->first();
 
         if (isset($request['product_option_values'])) {
             $options = $this->option->with([

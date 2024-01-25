@@ -8,28 +8,46 @@ use Modules\Attribute\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\User\Entities\UserAddress;
 use Modules\Attribute\Entities\AttributeValue;
+use Modules\Vendor\Entities\VendorArea;
+use Modules\User\Entities\User;
+use Illuminate\Support\Facades\Exception;
+
 
 trait OrderCalculationTrait
 {
     use CartTrait;
 
+    protected function getShippingPrice($areaId)
+    {
+        // Fetch shipping price from VendorArea based on area_id
+        $vendorArea = VendorArea::where('area_id', $areaId)->first();
+
+        return $vendorArea ? $vendorArea->shipping_price : 10;
+    }
+
     public function calculateTheOrder($data)
     {
         // return $cart = $this->cartDetails($data);
         $cart = $this->cartDetails($data);
+        $userId = $data['user_token'];
+        $user = User::find($userId);
+        $areaId = $user->area_id;
+
 
         $subtotal           = 0.000;
         $total              = 0.000;
         $attribute_prices   = 0.000;
         $options            = null;
         $attributes         = null;
+        $shippingPrice = $this->getShippingPrice($areaId);
+        $products = [];
 
         foreach ($cart as $key => $product) {
 
             $orderProducts['product']    = Product::find($key);
             $orderProducts['qty']        = $product['quantity'];
             $orderProducts['price']      = $product['price'];
-            $orderProducts['total']      = $product['price'] * $product['quantity'];
+            $orderProducts['total']      = $shippingPrice + $product['price'] * $product['quantity'] ;
 
             if (!is_null($product['attributes']['options'])) {
 
@@ -85,10 +103,9 @@ trait OrderCalculationTrait
             'total'             => $total + $attribute_prices,
             'vendor_id'         => $this->getVendor($data),
             'order_products'    => $products,
-            'address'           => $this->address($data)
+            'address'           => $this->address($data),
+            'shipping_price'    => $shippingPrice
         ];
-
-        return $subtotal;
     }
 
     public function address($data)

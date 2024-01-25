@@ -91,6 +91,7 @@ class OrderRepository
                 'is_holding'        => false,
                 'subtotal'          => $data['subtotal'],
                 'discount'          => $discount,
+                'shipping_price'    => $data['shipping_price'],
                 'total'             => $total,
                 'vendor_id'         => $data['vendor_id'],
                 'user_id'           => $user ? $user['id'] : 1,
@@ -118,7 +119,7 @@ class OrderRepository
                 'product_id'    => $product['product']['id'],
                 'price'         => $product['price'],
                 'qty'           => $product['qty'],
-                'total'         => $product['total'],
+                'total'         => $product['total'],// shall we show the shipping price here or not?
             ]);
 
             if (!is_null($product['options'])) {

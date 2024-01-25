@@ -19,6 +19,7 @@ class Order extends Model
       'total',
       'user_id',
       'vendor_id',
+      'shipping_price',
       'order_status_id',
     ];
 

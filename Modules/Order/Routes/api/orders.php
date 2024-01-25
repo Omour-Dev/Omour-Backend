@@ -16,3 +16,8 @@ Route::group(['prefix' => 'orders' ,'middleware' => 'auth:api'], function () {
     Route::post('driver/update' , 'OrderController@driverUpdateOrders')->name('api.orders.update.driver');
 
 });
+
+Route::get('/test-cart', function () {
+    Cart::add('123', 'Product Name', 1, 9.99);
+    return Cart::getContent();
+});

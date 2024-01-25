@@ -4,7 +4,7 @@ use Illuminate\Support\Facades\Schema;
 use Illuminate\Database\Schema\Blueprint;
 use Illuminate\Database\Migrations\Migration;
 
-class CreateVendorStatusesTable extends Migration
+class AddPriceShippingToVendorAreasTable extends Migration
 {
     /**
      * Run the migrations.
@@ -13,11 +13,8 @@ class CreateVendorStatusesTable extends Migration
      */
     public function up()
     {
-        Schema::create('vendor_statuses', function (Blueprint $table) {
-            $table->increments('id');
-            $table->boolean('accepted_orders')->default(false);
-            $table->string('label_color')->default('warning');
-            $table->timestamps();
+        Schema::table('vendor_areas', function (Blueprint $table) {
+            $table->decimal('shipping_price', 9, 3)->default(0.000);
         });
     }
 
@@ -28,6 +25,8 @@ class CreateVendorStatusesTable extends Migration
      */
     public function down()
     {
-        Schema::dropIfExists('vendor_statuses');
+        Schema::table('vendor_areas', function (Blueprint $table) {
+            $table->dropColumn('shipping_price');
+        });
     }
 }

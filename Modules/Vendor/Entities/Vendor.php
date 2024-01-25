@@ -58,7 +58,7 @@ class Vendor extends Model implements TranslatableContract
         return $this->hasMany(VendorImage::class);
     }
 
-    public function offers()
+     public function offers()
     {
         return $this->belongsToMany(\Modules\Offer\Entities\Offer::class , 'offer_vendors');
     }
