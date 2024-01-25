@@ -10,7 +10,7 @@ class OrderResource extends JsonResource
     public function toArray($request)
     {
         return [
-            'id'       => $this->id,
+            'id'                 => $this->id,
             'subtotal'           => $this->subtotal,
             'discount'           => $this->discount,
             'total'              => $this->total,
@@ -21,6 +21,7 @@ class OrderResource extends JsonResource
             'address'            => new OrderAddressResource($this->address),
             'rate'               => new OrderRateResource($this->rate),
             'created_at'         => $this->created_at,
+            'shipping_price'     => $this->shipping_price,
         ];
     }
 }

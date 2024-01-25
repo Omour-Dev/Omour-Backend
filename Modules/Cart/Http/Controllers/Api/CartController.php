@@ -22,7 +22,7 @@ class CartController extends ApiController
     public function index(Request $request)
     {
         return $this->response([
-            'items' => array_values(collect($this->cartDetails($request))->toArray()),
+            'items' => array_values(collect($this->cartDetails())->toArray()),
             'total' => $this->cartTotal()
         ]);
     }
@@ -49,17 +49,17 @@ class CartController extends ApiController
         $this->removeItem($request,$id);
 
         return $this->response([
-            'items' => array_values(collect($this->cartDetails($request))->toArray()),
+            'items' => array_values(collect($this->cartDetails())->toArray()),
             'total' => $this->cartTotal()
         ]);
     }
 
     public function clear(Request $request)
     {
-        $this->clearCart($request);
+        $this->clearCart();
 
         return $this->response([
-            'items' => array_values(collect($this->cartDetails($request))->toArray()),
+            'items' => array_values(collect($this->cartDetails())->toArray()),
             'total' => $this->cartTotal()
         ]);
     }

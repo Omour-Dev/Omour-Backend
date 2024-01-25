@@ -63,9 +63,8 @@ class OrderRepository
 
         try {
 
-
             $data = $this->calculateTheOrder($request);
-
+            
             $status = $this->statusOfOrder(true);
 
             $user =  $this->user->find($request['user_token']);

@@ -1,6 +1,6 @@
 <?php
 
-Route::group(['prefix' => 'orders' ] , function () {
+Route::group(['prefix' => 'orders' ,'middleware' => 'auth:api'] , function () {
     Route::post('add'       , 'OrderController@add')->name('api.orders.add');
     Route::post('rate'      , 'OrderController@rate')->name('api.orders.rate');
     Route::get('success'    , 'OrderController@success')->name('api.orders.success');
@@ -15,9 +15,4 @@ Route::group(['prefix' => 'orders' ,'middleware' => 'auth:api'], function () {
     Route::get('driver'         , 'OrderController@driverOrders')->name('api.orders.driver');
     Route::post('driver/update' , 'OrderController@driverUpdateOrders')->name('api.orders.update.driver');
 
-});
-
-Route::get('/test-cart', function () {
-    Cart::add('123', 'Product Name', 1, 9.99);
-    return Cart::getContent();
 });

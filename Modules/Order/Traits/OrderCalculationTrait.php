@@ -25,14 +25,34 @@ trait OrderCalculationTrait
         return $vendorArea ? $vendorArea->shipping_price : 10;
     }
 
+    protected function getUserArea()
+    {
+        $user = auth()->user();
+
+        if (!$user) {
+            return $this->handleError("User not authenticated");
+        } else {
+            $address = $user->addresses->first();
+
+            if (!$address){
+                return $this->handleError("User has no assigned address");
+            }else{
+                $areaId = $address->area_id;
+                return $areaId;
+            }
+        }
+    }
+
+    protected function handleError($message)
+    {
+        return ['error' => $message];
+    }
+
     public function calculateTheOrder($data)
     {
-        // return $cart = $this->cartDetails($data);
-        $cart = $this->cartDetails($data);
-        $userId = $data['user_token'];
-        $user = User::find($userId);
-        $areaId = $user->area_id;
 
+        $cart = $this->cartDetails();
+        $areaId = $this->getUserArea();
 
         $subtotal           = 0.000;
         $total              = 0.000;
@@ -101,27 +121,34 @@ trait OrderCalculationTrait
         return $data = [
             'subtotal'          => $subtotal,
             'total'             => $total + $attribute_prices,
-            'vendor_id'         => $this->getVendor($data),
+            'vendor_id'         => $this->getVendor(),
             'order_products'    => $products,
-            'address'           => $this->address($data),
+            'address'           => $this->address(),
             'shipping_price'    => $shippingPrice
         ];
+
     }
 
-    public function address($data)
+    public function address()
     {
-        $address = UserAddress::find($data['address_id']);
-
-        return [
-            'floor'     => $address['floor'],
-            'building'  => $address['building'],
-            'door'      => $address['door'],
-            'street'    => $address['street'],
-            'address'   => $address['address'],
-            'area_id'   => $address['area_id'],
-            'username'  => $address['username'],
-            'mobile'    => $address['mobile'],
-            'email'     => $address['email'],
-        ];
+        $areaId = $this->getUserArea();
+        $address = UserAddress::where('area_id', $areaId)->first();
+        if (!$address) {
+            return ['error' => 'Address not found for the specified area.'];
+        }
+        else {
+            return [
+                'floor'     => $address['floor'],
+                'building'  => $address['building'],
+                'door'      => $address['door'],
+                'street'    => $address['street'],
+                'address'   => $address['address'],
+                'area_id'   => $address['area_id'],
+                'username'  => $address['username'],
+                'mobile'    => $address['mobile'],
+                'email'     => $address['email'],
+            ];
+        }
     }
+
 }

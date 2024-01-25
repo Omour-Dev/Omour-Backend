@@ -18,7 +18,6 @@ trait CartTrait
     public function getVendor()
     {
         $cart = $this->getCart(auth()->id());
-
         $vendorCondition = $cart->getCondition('vendor');
 
         if ($vendorCondition) {
@@ -95,15 +94,12 @@ trait CartTrait
     public function cartDetails()
     {
         $cart = $this->getCart(auth()->id());
-
         $items = [];
 
         return $cart->getContent()->each(function ($item) use (&$items) {
             $items[] = $item;
         });
     }
-
-
 
     public function cartTotal()
     {
