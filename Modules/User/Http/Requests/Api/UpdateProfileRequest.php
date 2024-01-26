@@ -19,9 +19,9 @@ class UpdateProfileRequest extends FormRequest
             case 'put':
             case 'PUT':
                 return [
-                    'name'            => 'required',
-                    'mobile'          => 'required|numeric|unique:users,mobile,'.auth()->id().'',
-                    'email'           => 'required|unique:users,email,'.auth()->id().'',
+                    'name'            => 'nullable',
+                    'mobile'          => 'nullable|numeric|unique:users,mobile,'.auth()->id().'',
+                    'email'           => 'nullable|unique:users,email,'.auth()->id().'',
                 ];
         }
     }
