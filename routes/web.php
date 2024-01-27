@@ -7,6 +7,3 @@ Route::post('install/configuration'     , 'InstallController@store')->name('stor
 Route::post('install/db/configuration'  , 'InstallController@db')->name('store.db.configurations');
 Route::post('install/app/configuration' , 'InstallController@app')->name('store.app.configurations');
 Route::get('install/complete'           , 'InstallController@complete')->name('complete.installation');
-Route::get('/cart/add', function () {
-    return view('test');
-});

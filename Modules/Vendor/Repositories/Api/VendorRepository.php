@@ -3,12 +3,17 @@
 namespace Modules\Vendor\Repositories\Api;
 
 use Modules\Vendor\Entities\Vendor;
+use Modules\Vendor\Entities\VendorSeller;
+use Modules\Vendor\Entities\VendorArea;
+
 
 class VendorRepository
 {
-    function __construct(Vendor $vendor)
+    function __construct(Vendor $vendor,VendorArea $vendorArea, VendorSeller $vendorSeller)
     {
-        $this->vendor   = $vendor;
+        $this->vendor = $vendor;
+        $this->vendorArea = $vendorArea;
+        $this->vendorSeller = $vendorSeller;
     }
 
     public function getAllActive($request)
@@ -39,4 +44,27 @@ class VendorRepository
         $vendor = $this->vendor->with(['images'])->active()->where('id',$id)->first();
         return $vendor;
     }
+
+    public function getVendorId()
+    {
+        $userId = auth()->id();
+        $SellerId = $this->vendorSeller->where('seller_id', $userId)->first();
+
+        if ($SellerId) {
+            $vendorId = $SellerId->vendor_id;
+            return $vendorId;
+
+        }
+        return null;
+    }
+
+    public function getArea($request, $vendorId) {
+        $areaId = $request->input('area_id');
+        // Check if a record already exists for the given vendor and area
+        $vendorArea = $this->vendorArea->where('vendor_id', $vendorId)
+                                ->where('area_id', $areaId)
+                                ->first();
+        return $vendorArea->area_id;
+    }
+
 }
