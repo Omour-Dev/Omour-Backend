@@ -37,26 +37,22 @@ class VendorController extends ApiController
 
     public function addShippingPrice(Request $request)
     {
-        try{
-            // if(!$vendorId)// handle return $this->response(new VendorResource($vendor));
-            [$shippingPrice, $areaId, $vendorId, $vendorArea] = $this->vendor->getPriceAreaData($request);
+        [$shippingPrice, $areaId, $vendorId, $vendorArea] = $this->vendor->getPriceAreaData($request);
 
-            if($vendorArea == null){
-                $this->vendorAreaObj->vendor_id = $vendorId;
-                $this->vendorAreaObj->area_id = $areaId;
-                $this->vendorAreaObj->shipping_price = $shippingPrice;
-                $this->vendorAreaObj->save();
-                return new VendorAreaResource($this->vendorAreaObj);
-            }
-            else{
-                return response()->json(['message' => 'there are already shipping price for this area']);
-            }
+        if ($vendorId === null) {
+            return response()->json(['error' => 'This vendor admin does not have a vendor shop'], 404);
         }
-        catch (\Exception $e){
-            \Log::error('handleError ' . $e->getMessage());
-            return response()->json(['details' => $e->getMessage()], 500);
+        
+        if($vendorArea == null){
+            $this->vendorAreaObj->vendor_id = $vendorId;
+            $this->vendorAreaObj->area_id = $areaId;
+            $this->vendorAreaObj->shipping_price = $shippingPrice;
+            $this->vendorAreaObj->save();
+            return new VendorAreaResource($this->vendorAreaObj);
         }
-
+        else{
+            return response()->json(['message' => 'there are already shipping price for this area']);
+        }
     }
 
     public function UpdateShippingPrice(Request $request)

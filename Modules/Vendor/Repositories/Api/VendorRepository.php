@@ -55,8 +55,7 @@ class VendorRepository
             return $vendorId;
         }
         else {
-            // handle return $this->response(new VendorResource($vendor));
-            // return response()->json(['message' => 'This vendor admin doent has vendor shop']);
+            return null;
         }
     }
 
