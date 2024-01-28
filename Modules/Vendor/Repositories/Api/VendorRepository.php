@@ -53,18 +53,28 @@ class VendorRepository
         if ($SellerId) {
             $vendorId = $SellerId->vendor_id;
             return $vendorId;
-
         }
-        return null;
+        else {
+            // handle return $this->response(new VendorResource($vendor));
+            // return response()->json(['message' => 'This vendor admin doent has vendor shop']);
+        }
     }
 
-    public function getArea($request, $vendorId) {
-        $areaId = $request->input('area_id');
+    public function getArea($areaId, $vendorId) {
         // Check if a record already exists for the given vendor and area
         $vendorArea = $this->vendorArea->where('vendor_id', $vendorId)
                                 ->where('area_id', $areaId)
                                 ->first();
-        return $vendorArea->area_id;
+        return $vendorArea;
     }
 
+    public function getPriceAreaData($request)
+    {
+        $shippingPrice = (float) $request->input('shipping_price');
+        $areaId = (int) $request->input('area_id');
+
+        $vendorId = $this->getVendorId();
+        $vendorArea = $this->getArea($areaId, $vendorId);
+        return [$shippingPrice, $areaId, $vendorId, $vendorArea];
+    }
 }

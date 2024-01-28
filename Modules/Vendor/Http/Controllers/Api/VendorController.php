@@ -3,9 +3,9 @@
 namespace Modules\Vendor\Http\Controllers\Api;
 
 use Illuminate\Http\Request;
-// use Modules\Vendor\Http\Requests\Api\AddShippingPriceRequest;
 use Modules\Vendor\Entities\VendorArea;
 use Modules\Vendor\Transformers\Api\VendorResource;
+use Modules\Vendor\Transformers\Api\VendorAreaResource;
 use Modules\Vendor\Repositories\Api\VendorRepository;
 use Modules\Apps\Http\Controllers\Api\ApiController;
 
@@ -15,7 +15,7 @@ class VendorController extends ApiController
     function __construct(VendorRepository $vendor, VendorArea $vendorArea)
     {
         $this->vendor = $vendor;
-        $this->vendorArea = $vendorArea;
+        $this->vendorAreaObj = $vendorArea;
     }
 
     public function vendors(Request $request)
@@ -37,31 +37,38 @@ class VendorController extends ApiController
 
     public function addShippingPrice(Request $request)
     {
-        try {
+        try{
             // if(!$vendorId)// handle return $this->response(new VendorResource($vendor));
-            $shippingPrice = (float) $request->input('shipping_price');
+            [$shippingPrice, $areaId, $vendorId, $vendorArea] = $this->vendor->getPriceAreaData($request);
 
-            $vendorId = $this->vendor->getVendorId();
-            $areaId = $this->vendor->getArea($request, $vendorId);
-
-            $this->vendorArea->create([
-                    'vendor_id'      => $vendorId,
-                    'area_id'        => $areaId,
-                    'shipping_price' => $shippingPrice,
-                ]);
-                return response()->json(['message' => 'Shipping price added successfully']);
+            if($vendorArea == null){
+                $this->vendorAreaObj->vendor_id = $vendorId;
+                $this->vendorAreaObj->area_id = $areaId;
+                $this->vendorAreaObj->shipping_price = $shippingPrice;
+                $this->vendorAreaObj->save();
+                return new VendorAreaResource($this->vendorAreaObj);
+            }
+            else{
+                return response()->json(['message' => 'there are already shipping price for this area']);
+            }
         }
         catch (\Exception $e){
             \Log::error('handleError ' . $e->getMessage());
             return response()->json(['details' => $e->getMessage()], 500);
         }
+
     }
 
     public function UpdateShippingPrice(Request $request)
     {
-
-        // if ($vendorArea) {
-        //     $vendorArea->update(['shipping_price' => $shippingPrice]);
-        // }
+        [$shippingPrice, $areaId, $vendorId, $vendorArea] = $this->vendor->getPriceAreaData($request);
+        if ($vendorArea != null) {
+            $vendorArea->update(['shipping_price' => $shippingPrice]);
+            $vendorArea->save();
+            return new VendorAreaResource($vendorArea);
+            }
+        else{
+            return response()->json(['message' => 'there is no area id with this number']);
+        }
     }
 }
