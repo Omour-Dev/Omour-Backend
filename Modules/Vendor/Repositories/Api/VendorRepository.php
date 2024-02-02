@@ -5,6 +5,7 @@ namespace Modules\Vendor\Repositories\Api;
 use Modules\Vendor\Entities\Vendor;
 use Modules\Vendor\Entities\VendorSeller;
 use Modules\Vendor\Entities\VendorArea;
+use Illuminate\Support\Facades\Log;
 
 
 class VendorRepository
@@ -45,19 +46,19 @@ class VendorRepository
         return $vendor;
     }
 
-    public function getVendorId()
-    {
-        $userId = auth()->id();
-        $SellerId = $this->vendorSeller->where('seller_id', $userId)->first();
+    // public function getVendorId()
+    // {
+    //     $userId = auth()->id();
+    //     $SellerId = $this->vendorSeller->where('seller_id', $userId)->first();
 
-        if ($SellerId) {
-            $vendorId = $SellerId->vendor_id;
-            return $vendorId;
-        }
-        else {
-            return null;
-        }
-    }
+    //     if ($SellerId) {
+    //         $vendorId = $SellerId->vendor_id;
+    //         return $vendorId;
+    //     }
+    //     else {
+    //         return null;
+    //     }
+    // }
 
     public function getArea($areaId, $vendorId) {
         // Check if a record already exists for the given vendor and area
@@ -67,13 +68,29 @@ class VendorRepository
         return $vendorArea;
     }
 
-    public function getPriceAreaData($request)
+    public function getPriceAreaData($request, $vendorId)
     {
-        $shippingPrice = (float) $request->input('shipping_price');
-        $areaId = (int) $request->input('area_id');
+        $results = [];
+        $shippingPrices = $request->input('shipping_prices');
 
-        $vendorId = $this->getVendorId();
-        $vendorArea = $this->getArea($areaId, $vendorId);
-        return [$shippingPrice, $areaId, $vendorId, $vendorArea];
+        foreach ($shippingPrices as $areaId => $shippingPriceData) {
+            $shippingPrice = (float) $shippingPriceData['price'];
+            $vendorArea = $this->getArea($areaId, $vendorId);
+            // Add the data to the result array
+            $results[] = [$shippingPrice, $areaId, $vendorId, $vendorArea];
+        }
+        return $results;
+    }
+
+    public function createVendorAreas($results)
+    {
+        foreach($results as $result){
+            $vendorAreasObj = new VendorArea();
+            $vendorAreasObj->vendor_id = $result[2];
+            $vendorAreasObj->area_id = $result[1];
+            $vendorAreasObj->shipping_price =  $result[0];
+            $vendorAreasObj->save();
+        }
+        return $vendorAreasObj;
     }
 }

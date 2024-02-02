@@ -5,6 +5,7 @@ namespace Modules\Vendor\Http\Controllers\Dashboard;
 use Illuminate\Http\Request;
 use Illuminate\Http\Response;
 use Illuminate\Routing\Controller;
+use Illuminate\Support\Facades\Log;
 use Modules\Core\Traits\DataTable;
 use Modules\Vendor\Http\Requests\Dashboard\VendorRequest;
 use Modules\Vendor\Transformers\Dashboard\VendorResource;
@@ -60,6 +61,7 @@ class VendorController extends Controller
 
     public function store(VendorRequest $request)
     {
+
         try {
             $create = $this->vendor->create($request);
 

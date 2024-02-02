@@ -131,19 +131,34 @@
                                         <label class="col-md-2">
                                             {{__('vendor::dashboard.vendors.create.form.areas')}}
                                         </label>
-                                        <div class="col-md-9">
-                                            <select name="area_id[]" id="single" class="form-control select2-allow-clear" multiple>
-                                                <option value=""></option>
-                                                @foreach ($states as $state)
-                                                <optgroup label="{{ $state->translate(locale())->title }}">
-                                                    @foreach ($state->areas as $area)
-                                                    <option value="{{ $area['id'] }}">
-                                                        {{ $area->translate(locale())->title }}
-                                                    </option>
-                                                    @endforeach
-                                                </optgroup>
-                                                @endforeach
-                                            </select>
+                                        <div class="form-group">
+                                            <label class="col-md-2">
+                                                {{-- {{__('vendor::dashboard.vendors.create.form.shipping_prices')}} --}}
+                                            </label>
+                                            <div class="col-md-9">
+                                                <table class="table">
+                                                    <thead>
+                                                        <tr>
+                                                            <th>{{ __('Area') }}</th>
+                                                            <th>{{ __('Shipping Price') }}</th>
+                                                        </tr>
+                                                    </thead>
+                                                    <tbody>
+                                                        @foreach ($states as $state)
+                                                            @foreach ($state->areas as $area)
+                                                                <tr>
+                                                                    <td>{{ $area->translate(locale())->title }}</td>
+                                                                    <td>
+                                                                        <input type="text" name="shipping_prices[{{ $area['id'] }}][area_id]" value="{{ $area['id'] }}" style="display:none;">
+                                                                        <input type="text" name="shipping_prices[{{ $area['id'] }}][price]" class="form-control" data-name="shipping_prices[{{ $area['id'] }}][price]">
+                                                                    </td>
+                                                                </tr>
+                                                            @endforeach
+                                                        @endforeach
+                                                    </tbody>
+                                                </table>
+                                                <div class="help-block"></div>
+                                            </div>
                                         </div>
                                     </div>
                                     {{-- <div class="form-group">

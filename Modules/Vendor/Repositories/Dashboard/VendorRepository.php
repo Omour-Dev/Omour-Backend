@@ -3,15 +3,20 @@
 namespace Modules\Vendor\Repositories\Dashboard;
 
 use Modules\Vendor\Entities\Vendor;
+use Modules\Vendor\Entities\VendorArea;
+use Modules\Vendor\Http\Controllers\Api\VendorController as VendorController;
 use Hash;
+use Illuminate\Support\Facades\Log;
 use DB;
 
 class VendorRepository
 {
 
-    function __construct(Vendor $vendor)
+    function __construct(Vendor $vendor, VendorController $vendorController, VendorArea $vendorArea)
     {
         $this->vendor   = $vendor;
+        $this->vendorController   = $vendorController;
+        $this->vendorArea   = $vendorArea;
     }
 
     public function getAllActive($order = 'id', $sort = 'desc')
@@ -49,8 +54,8 @@ class VendorRepository
             $vendor->sections()->sync($request->section_id);
             $vendor->areas()->sync($request->area_id);
             $this->vendorImages($vendor, $request);
-
             $this->translateTable($vendor, $request);
+            $this->vendorController->addShippingPrice($request, $vendor->id);
 
             DB::commit();
             return true;
