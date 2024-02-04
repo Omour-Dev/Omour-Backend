@@ -24,6 +24,9 @@ class VendorRequest extends FormRequest
                   'image'           => 'required',
                   'title.*'         => 'required|unique:vendor_translations,title',
                   'description.*'   => 'required',
+                  'delivery_time'   => 'required|numeric|min:10|max:60',
+                  'shipping_prices'  => 'required',
+                  'shipping_prices.*.price'  => 'required|numeric|min:10|max:60',
                 ];
 
             //handle updates
@@ -59,6 +62,16 @@ class VendorRequest extends FormRequest
             'payment_id.required'     => __('vendor::dashboard.vendors.validation.payments.required'),
             'seller_id.required'      => __('vendor::dashboard.vendors.validation.sellers.required'),
             'image.required'          => __('vendor::dashboard.vendors.validation.image.required'),
+
+            'delivery_time.required'  => __('Delivery time is required'),
+            'delivery_time.numeric'   => __('Delivery Time should be only numric'),
+            'delivery_time.min'       => __('min value of Delivery Time is 10 minutes'),
+            'delivery_time.max'       => __('max value of Delivery Time is 60 minutes'),
+
+            'shipping_prices.*.price.required'  => __('Shipping Price is required'),
+            'shipping_prices.*.price.numeric'   => __('Shipping Price should be numeric'),
+            'shipping_prices.*.price.min'       => __('min value of Shipping Price is 10'),
+            'shipping_prices.*.price.max'       => __('max value of Shipping Price is 60'),
         ];
 
         foreach (config('laravellocalization.supportedLocales') as $key => $value) {
