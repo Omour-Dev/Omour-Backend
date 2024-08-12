@@ -10,14 +10,15 @@ use Modules\Attribute\Transformers\Api\AttributeResource;
 
 trait CartTrait
 {
-    public function getCart()
+    public function getCart($userId)
     {
-        return Cart::session(auth()->id());
+        return Cart::session($userId);
+
     }
 
-    public function getVendor()
+    public function getVendor($data)
     {
-        $cart = $this->getCart(auth()->id());
+        $cart = $this->getCart($data['user_token']);
         $vendorCondition = $cart->getCondition('vendor');
 
         if ($vendorCondition) {
@@ -31,9 +32,9 @@ trait CartTrait
     {
         $errors = null;
 
-        $cart = $this->getCart(auth()->id());
+        $cart = $this->getCart($data['user_token']);
         $vendor = $cart->getCondition('vendor');
-        // dd($product->vendor_id);
+
         if ($vendor) {
             if ($vendor->getType() != $product->vendor_id)
                 return $errors = new MessageBag([
@@ -46,8 +47,7 @@ trait CartTrait
 
     public function addToCart($data, $item)
     {
-        $cart = $this->getCart(auth()->id());
-        // dd(str(url($item['product']['image'])));
+        $cart = $this->getCart($data['user_token']);
 
         $cart->add([
             'id' => $item['product']['id'],
@@ -78,33 +78,32 @@ trait CartTrait
 
     public function removeItem($data, $id)
     {
-        $cart = $this->getCart(auth()->id());
+        $cart = $this->getCart($data['user_token']);
         return $cart->remove($id);
     }
 
-    public function clearCart()
+    public function clearCart($data)
     {
-        $cart = $this->getCart(auth()->id());
+        $cart = $this->getCart($data['user_token']);
         $cart->clear();
         $cart->clearCartConditions();
 
         return true;
     }
 
-    public function cartDetails()
+    public function cartDetails($data)
     {
-        $cart = $this->getCart(auth()->id());
+        $cart = $this->getCart($data['user_token']);
         $items = [];
-
         return $cart->getContent()->each(function ($item) use (&$items) {
             $items[] = $item;
         });
     }
 
-    public function cartTotal()
+    public function cartTotal($data)
     {
-        $cart = $this->getCart(auth()->id());
-
+        $cart = $this->getCart($data['user_token']);
+        
         return $cart->getTotal();
     }
 }

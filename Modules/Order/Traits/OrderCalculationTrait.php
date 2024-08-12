@@ -7,6 +7,7 @@ use Modules\Variation\Entities\Option;
 use Modules\Attribute\Entities\Attribute;
 use Modules\Product\Entities\Product;
 use Modules\User\Entities\UserAddress;
+use Illuminate\Http\Request;
 use Modules\Attribute\Entities\AttributeValue;
 use Modules\Vendor\Entities\VendorArea;
 use Modules\User\Entities\User;
@@ -22,14 +23,12 @@ trait OrderCalculationTrait
         // Fetch shipping price from VendorArea based on area_id
         $vendorArea = VendorArea::where('area_id', $areaId)->first();
 
-        return $vendorArea ? $vendorArea->shipping_price : 10;
+        return $vendorArea ? $vendorArea->shipping_price : 15;
     }
 
-    protected function getUserArea()
+    protected function getUserArea($data)
     {
-        $user = auth()->user();
-
-        if (!$user) {
+        if ($data['user_token']) {
             return $this->handleError("User not authenticated");
         } else {
             $address = $user->addresses->first();
@@ -51,8 +50,8 @@ trait OrderCalculationTrait
     public function calculateTheOrder($data)
     {
 
-        $cart = $this->cartDetails();
-        $areaId = $this->getUserArea();
+        $cart = $this->cartDetails($data);
+        $areaId = $this->getUserArea($data);
 
         $subtotal           = 0.000;
         $total              = 0.000;
@@ -121,17 +120,17 @@ trait OrderCalculationTrait
         return $data = [
             'subtotal'          => $subtotal,
             'total'             => $total + $attribute_prices,
-            'vendor_id'         => $this->getVendor(),
+            'vendor_id'         => $this->getVendor($data),
             'order_products'    => $products,
-            'address'           => $this->address(),
+            'address'           => $this->address($data),
             'shipping_price'    => $shippingPrice
         ];
 
     }
 
-    public function address()
+    public function address($data)
     {
-        $areaId = $this->getUserArea();
+        $areaId = $this->getUserArea($data);
         $address = UserAddress::where('area_id', $areaId)->first();
         if (!$address) {
             return ['error' => 'Address not found for the specified area.'];

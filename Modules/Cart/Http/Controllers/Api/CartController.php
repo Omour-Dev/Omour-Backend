@@ -22,25 +22,26 @@ class CartController extends ApiController
     public function index(Request $request)
     {
         return $this->response([
-            'items' => array_values(collect($this->cartDetails())->toArray()),
-            'total' => $this->cartTotal()
+            'items' => array_values(collect($this->cartDetails($request))->toArray()),
+            'total' => $this->cartTotal($request)
         ]);
     }
 
     public function add(Request $request)
     {
-        $product_id = (int) $request->input('product_id');
-        $data = $this->product->findById($product_id);
+        $data = $this->product->findById($request);
 
         $vendorCheck = $this->vendorValidation($request,$data['product']);
+
         if (!is_null($vendorCheck)) {
             return $this->invalidData($vendorCheck);
         }
 
-        $cartCollection = $this->addToCart($request,$data);
+        $this->addToCart($request,$data);
+
         return $this->response([
-            'items' => $cartCollection->toArray(),
-            'total' => $cartCollection->count()
+            'items' => array_values(collect($this->cartDetails($request))->toArray()),
+            'total' => $this->cartTotal($request)
         ]);
     }
 
@@ -49,18 +50,18 @@ class CartController extends ApiController
         $this->removeItem($request,$id);
 
         return $this->response([
-            'items' => array_values(collect($this->cartDetails())->toArray()),
-            'total' => $this->cartTotal()
+            'items' => array_values(collect($this->cartDetails($request))->toArray()),
+            'total' => $this->cartTotal($request)
         ]);
     }
 
     public function clear(Request $request)
     {
-        $this->clearCart();
+        $this->clearCart($request);
 
         return $this->response([
-            'items' => array_values(collect($this->cartDetails())->toArray()),
-            'total' => $this->cartTotal()
+            'items' => array_values(collect($this->cartDetails($request))->toArray()),
+            'total' => $this->cartTotal($request)
         ]);
     }
 }
