@@ -11,3 +11,12 @@ Homestead.json
 Homestead.yaml
 npm-debug.log
 yarn-error.log
+/storage/*.log
+/storage/app/*.key
+/.idea
+/.vscode
+/coverage
+/build
+/dist
+/.php_cs.cache
+/.php_cs
